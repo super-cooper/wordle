@@ -58,7 +58,12 @@ while results != [Letter.GREEN] * 5:
         # Ensure we don't use a yellow letter in the same spot as before
         and all(i not in yellow.get(c, []) for i, c in enumerate(w))
         # Ensure any green characters are in the right places
-        and all(i in green.get(c, [i]) for i, c in enumerate(w))
+        and (
+            any(c in green for c in w)
+            and all(i in green.get(c, [i]) for i, c in enumerate(w))
+            if green
+            else True
+        )
         # Ensure that all yellow characters appear in the word
         and any(c in (yellow or [c]) for c in w)
     }
