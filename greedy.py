@@ -33,7 +33,7 @@ class Letter(enum.IntEnum):
 
 yellow = collections.defaultdict(list)
 green = collections.defaultdict(list)
-black = set()
+black = collections.defaultdict(list)
 
 word = input("Word: ")
 results = [Letter.BLACK] * 5
@@ -47,14 +47,17 @@ while results != [Letter.GREEN] * 5:
         elif result == Letter.YELLOW:
             yellow[c].append(i)
         elif result == Letter.BLACK:
-            black.add(c)
+            black[c].append(i)
 
     # Narrow space of potential words to adhere to game state
     words = {
         w
         for w in words
         # Ensure no invalid letters are used
-        if all(c not in black for c in w)
+        if all(
+            c not in black if c not in green else i not in black[c]
+            for i, c in enumerate(w)
+        )
         # Ensure that all yellow characters appear in the word
         and all(c in w for c in yellow)
         # Ensure we don't use a yellow letter in the same spot as before
