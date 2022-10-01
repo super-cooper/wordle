@@ -107,11 +107,11 @@ fun playWordle(wordList: List<String>, startingGuess: String, answer: String): L
         // Narrow down the pool of remaining words
         words = words.filter { word ->
             // Ensure no confirmed invalid letters are used
-            word.withIndex().all { c ->
-                if (!green.contains(c.value)) {
-                    return@all !black.contains(c.value)
+            word.withIndex().all { (i, c) ->
+                if (!green.contains(c)) {
+                    return@all !black.contains(c)
                 } else {
-                    return@all !(black[c.value]?.contains(c.index) ?: false)
+                    return@all !(black[c]?.contains(i) ?: false)
                 }
             } &&
                 // Ensure that all yellow characters appear in the word
