@@ -18,8 +18,8 @@ fun findBestWords(words: List<String>, n: Int = 5): Map<String, Int> {
     }
 
     val scores = words
-        // Use only words with a unique set of characters
-        .filter { it.toSet().size == it.length }
+        // Use only words with a unique set of characters (if desired)
+        .filter { !uniqueOnly || it.toSet().size == it.length }
         // Get the score by summing the overall counter values of all the chars in the word
         .associateWith { word ->
             word.sumOf(counter::getValue)

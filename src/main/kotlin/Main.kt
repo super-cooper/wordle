@@ -10,7 +10,7 @@ fun main(args: Array<String>) {
     val words = File("words.txt").readText().split(",").map { it.trim() }
     when (args[0]) {
         "top" -> {
-            val top5Words = findBestWords(words)
+            val top5Words = findBestWords(words, uniqueOnly = true)
             println(
                 "Top 5 words:\n${
                 top5Words.asSequence()
