@@ -38,15 +38,14 @@ fun findBestWords(words: List<String>, n: Int = 5): Map<String, Int> {
     val tieBreaker = sortedWords.asSequence().takeWhile { it.value == topScore }
     if (tieBreaker.count() > 1) {
         // Calculate new scores based on how often each letter in the word will make a green square
-        val greenScores = tieBreaker.map { it.key }
-            .associateWith { tiedWord ->
-                // Take the sum of all the times a letter in the tied word shows up in the same
-                // index as any of the words in the overall word list
-                words.sumOf { word ->
-                    tiedWord.withIndex().count { word[it.index] == it.value }
-                }
-                // Sort by the scores
-            }.asSequence().sortedBy { -it.value }
+        val greenScores = tieBreaker.map { it.key }.associateWith { tiedWord ->
+            // Take the sum of all the times a letter in the tied word shows up in the same
+            // index as any of the words in the overall word list
+            words.sumOf { word ->
+                tiedWord.withIndex().count { word[it.index] == it.value }
+            }
+            // Sort by the scores
+        }.asSequence().sortedBy { -it.value }
             // Turn the sequence into a map
             .associate { it.key to sortedWords.getValue(it.key) }
         topWords.putAll(greenScores)
