@@ -15,9 +15,7 @@ fun findBestWords(words: List<String>, n: Int = 5, uniqueOnly: Boolean = false):
             // Get counts of all the characters in the word
             .eachCount()
             // Add the counts to the overall counter
-            .forEach { (letter, count) ->
-                counter[letter] = counter.getValue(letter) + count
-            }
+            .forEach { counter[it.key] = counter.getValue(it.key) + it.value }
     }
 
     val scores = words
@@ -97,16 +95,12 @@ fun playWordle(wordList: List<String>, startingGuess: String, answer: String): L
 
     do {
         val results = getResultOfGuess(guess, answer)
-        for (result in results.withIndex()) {
+        for ((i, letter) in results.withIndex()) {
             // Record the results of the current guess
-            when (result.value) {
-                Letter.GREEN -> green.getOrPut(guess[result.index], ::mutableListOf)
-                    .add(result.index)
-
-                Letter.YELLOW -> yellow.getOrPut(guess[result.index], ::mutableListOf)
-                    .add(result.index)
-
-                else -> black.getOrPut(guess[result.index], ::mutableListOf).add(result.index)
+            when (letter) {
+                Letter.GREEN -> green.getOrPut(guess[i], ::mutableListOf).add(i)
+                Letter.YELLOW -> yellow.getOrPut(guess[i], ::mutableListOf).add(i)
+                else -> black.getOrPut(guess[i], ::mutableListOf).add(i)
             }
         }
 
