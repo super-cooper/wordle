@@ -2,7 +2,10 @@
  * Finds the best word in the word list by counting the most common characters and then
  * scoring all the words with unique characters based on those counts.
  */
-fun findBestWords(words: List<String>, n: Int = 5): Map<String, Int> {
+fun findBestWords(words: List<String>, n: Int = 5, uniqueOnly: Boolean = false): Map<String, Int> {
+    if (words.size == 1) {
+        return mapOf(words.first() to 0)
+    }
     // Initialize counter of lowercase alphabet mapped to 0
     val counter = ('a'..'z').associateWith { 0 }.toMutableMap()
 
@@ -57,4 +60,81 @@ fun findBestWords(words: List<String>, n: Int = 5): Map<String, Int> {
             .take((n - topWords.size).coerceAtLeast(0))
             // Create the map from the sequence we've been operating on
             .associate { it.key to it.value }
+}
+
+enum class Letter { BLACK, YELLOW, GREEN }
+
+/**
+ * Determines one line of the wordle output
+ */
+fun getResultOfGuess(guess: String, answer: String): List<Letter> {
+    return guess.withIndex().map {
+        when (it.value) {
+            answer[it.index] -> Letter.GREEN
+            in answer -> Letter.YELLOW
+            else -> Letter.BLACK
+        }
+    }
+}
+
+/**
+ * Play Wordle, going from a starting guess until finding the answer
+ *
+ * Returns the list of each guess, including the start and the answer
+ */
+fun playWordle(wordList: List<String>, startingGuess: String, answer: String): List<String> {
+    // These maps will track the result history of our guesses
+    val yellow = mutableMapOf<Char, MutableList<Int>>()
+    val green = mutableMapOf<Char, MutableList<Int>>()
+    val black = mutableMapOf<Char, MutableList<Int>>()
+
+    // The list of words guessed so far
+    val guesses = mutableListOf<String>()
+    // The current guess
+    var guess = startingGuess
+    // The remaining pool of words to guess from
+    var words = wordList.toList()
+
+    do {
+        val results = getResultOfGuess(guess, answer)
+        for (result in results.withIndex()) {
+            // Record the results of the current guess
+            when (result.value) {
+                Letter.GREEN -> green.getOrPut(guess[result.index], ::mutableListOf)
+                    .add(result.index)
+
+                Letter.YELLOW -> yellow.getOrPut(guess[result.index], ::mutableListOf)
+                    .add(result.index)
+
+                else -> black.getOrPut(guess[result.index], ::mutableListOf).add(result.index)
+            }
+        }
+
+        // Narrow down the pool of remaining words
+        words = words.filter { word ->
+            // Ensure no confirmed invalid letters are used
+            word.withIndex().all { c ->
+                if (!green.contains(c.value)) {
+                    return@all !black.contains(c.value)
+                } else {
+                    return@all !(black[c.value]?.contains(c.index) ?: false)
+                }
+            } &&
+                // Ensure that all yellow characters appear in the word
+                yellow.keys.all(word::contains) &&
+                // Ensure that we don't use a yellow letter in the same spot as before
+                yellow.keys.all { c ->
+                    yellow.getValue(c).none { word[it] == c }
+                } &&
+                // Ensure any green characters are in the right places
+                green.keys.all { c ->
+                    green.getValue(c).all { word[it] == c }
+                }
+        }
+
+        guesses.add(guess)
+        guess = findBestWords(words, n = 1).asSequence().first().key
+    } while (guess != answer)
+
+    return guesses + guess
 }
