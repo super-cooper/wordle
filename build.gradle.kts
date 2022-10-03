@@ -1,7 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm") version "1.7.20" apply false
+    kotlin("multiplatform") version "1.7.20"
     application
 }
 
@@ -12,27 +10,24 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "16"
-}
-
-tasks.create<Jar>("javaJar") {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    manifest {
-        attributes["Main-Class"] = application.mainClass
+kotlin {
+    jvm("java") {
+        compilations.all {
+            kotlinOptions.jvmTarget = "16"
+        }
+        withJava()
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
+        }
     }
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    with(tasks.jar.get() as CopySpec)
+    sourceSets {
+        val javaMain by getting {
+            kotlin.srcDir("src/main/kotlin")
+            resources.srcDir("src/main/resources")
+        }
+    }
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("sh.adamcooper.wordle.MainKt")
 }
