@@ -1,3 +1,5 @@
+package sh.adamcooper.wordle
+
 import java.io.File
 import kotlin.system.exitProcess
 

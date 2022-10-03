@@ -1,3 +1,5 @@
+package sh.adamcooper.wordle
+
 /**
  * Finds the best word in the word list by counting the most common characters and then
  * scoring all the words with unique characters based on those counts.
