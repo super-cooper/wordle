@@ -183,7 +183,7 @@ private fun wordleScrapedJSON(): String {
  */
 fun wordleAnswer(index: Int): String {
     // Find where the desired index is declared
-    return wordleScrapedJSON().substringAfter("\"index\":$index")
+    return wordleScrapedJSON().substringAfter("\"index\":$index,")
         // Find where the answer is declared after the index
         .substringAfter("\"answer\":\"")
         // Cut off everything after the answer
