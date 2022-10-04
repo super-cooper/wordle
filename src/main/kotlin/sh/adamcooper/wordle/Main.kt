@@ -4,7 +4,7 @@ import java.io.File
 import kotlin.system.exitProcess
 
 private fun errorExit() {
-    println("Valid commands: \ntop\nplay answer")
+    println("Valid commands: \ntop\nplay <answer>\nlist\nanswer [n]")
     exitProcess(1)
 }
 
@@ -47,6 +47,13 @@ fun main(args: Array<String>) {
                 errorExit()
             }
             println(downloadWordList().joinToString(separator = "\n"))
+        }
+
+        "answer" -> {
+            if (args.size != 2) {
+                errorExit()
+            }
+            println(getWordleAnswer(args[1].toInt()))
         }
     }
 }

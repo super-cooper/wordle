@@ -4,6 +4,9 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 
+private val ANSWER_LIST_URL = URL("https://wordfinder.yourdictionary.com/wordle/answers/")
+private val JSON_PAIR_REGEX = Regex(""".*JSON\.parse\((.+)""")
+
 private val WORD_LIST_URL = URL("https://wordletoday.org/wordle-words.php")
 private val WORD_LIST_SCRAPING_REGEX = Regex("""^\s*([a-z]+(,\s|</p>))+\s*$""")
 
@@ -156,4 +159,24 @@ fun downloadWordList(): List<String> {
     }.also {
         reader.close()
     }
+}
+
+/**
+ * Get the Wordle answer from any given date
+ */
+fun getWordleAnswer(index: Int): String {
+    val reader = BufferedReader(InputStreamReader(ANSWER_LIST_URL.openStream()))
+
+    // Find the line where the answers JSON object exists
+    val matchLine = JSON_PAIR_REGEX.find(reader.readText())?.groups?.find {
+        it?.value?.startsWith('"') ?: false
+    }?.value ?: throw IllegalArgumentException("Could not find line with answers")
+    // Pull the raw JSON out of the call to `JSON.parse`
+    return matchLine.substring(0..matchLine.indexOf("}\");")).trimStart('"').replace("\\", "")
+        // Find where the desired index is declared
+        .substringAfter("\"index\":$index")
+        // Find where the answer is declared after the index
+        .substringAfter("\"answer\":\"")
+        // Cut off everything after the answer
+        .substringBefore('"')
 }
