@@ -16,9 +16,6 @@ kotlin {
             kotlinOptions.jvmTarget = "16"
         }
         withJava()
-        testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
-        }
     }
     sourceSets {
         val javaMain by getting {
