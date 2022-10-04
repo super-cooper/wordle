@@ -129,12 +129,12 @@ fun playWordle(wordList: List<String>, startingGuess: String, answer: String): L
                 // Ensure that all yellow characters appear in the word
                 yellow.keys.all(word::contains) &&
                 // Ensure that we don't use a yellow letter in the same spot as before
-                yellow.keys.all { c ->
-                    yellow.getValue(c).none { word[it] == c }
+                yellow.asSequence().all { (c, indices) ->
+                    indices.none { word[it] == c }
                 } &&
                 // Ensure any green characters are in the right places
-                green.keys.all { c ->
-                    green.getValue(c).all { word[it] == c }
+                green.asSequence().all { (c, indices) ->
+                    indices.all { word[it] == c }
                 }
         }
 
@@ -158,6 +158,7 @@ fun downloadWordList(): List<String> {
                         .splitToSequence(',')
                         .map(String::trim)
                         .map(String::uppercase)
+                        .filter(String::isNotEmpty)
                 )
             }
         }
