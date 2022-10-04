@@ -164,7 +164,7 @@ fun downloadWordList(): List<String> {
 /**
  * Get the Wordle answer from any given date
  */
-fun getWordleAnswer(index: Int): String {
+fun wordleAnswer(index: Int): String {
     val reader = BufferedReader(InputStreamReader(ANSWER_LIST_URL.openStream()))
 
     // Find the line where the answers JSON object exists

@@ -53,7 +53,7 @@ fun main(args: Array<String>) {
             if (args.size != 2) {
                 errorExit()
             }
-            println(getWordleAnswer(args[1].toInt()))
+            println(wordleAnswer(args[1].toInt()))
         }
     }
 }
