@@ -1,6 +1,5 @@
 package sh.adamcooper.wordle
 
-import java.io.File
 import kotlin.system.exitProcess
 
 private fun errorExit() {
@@ -13,7 +12,7 @@ fun main(args: Array<String>) {
         errorExit()
     }
 
-    val words = File("words.txt").readText().split(",").map(String::trim).map(String::uppercase)
+    val words = downloadWordList()
 
     when (args[0]) {
         "top" -> {
@@ -46,7 +45,7 @@ fun main(args: Array<String>) {
             if (args.size != 1) {
                 errorExit()
             }
-            println(downloadWordList().joinToString(separator = "\n"))
+            println(words.joinToString(separator = "\n"))
         }
 
         "answer" -> {
