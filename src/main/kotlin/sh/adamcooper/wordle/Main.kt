@@ -50,10 +50,10 @@ fun main(args: Array<String>) {
         }
 
         "answer" -> {
-            if (args.size != 2) {
+            if (args.size > 2) {
                 errorExit()
             }
-            println(wordleAnswer(args[1].toInt()))
+            println(wordleAnswer(args.getOrNull(1)?.toInt() ?: wordleCount()))
         }
 
         "count" -> {
