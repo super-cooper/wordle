@@ -161,10 +161,7 @@ fun downloadWordList(): List<String> {
     }
 }
 
-/**
- * Get the Wordle answer from any given date
- */
-fun wordleAnswer(index: Int): String {
+private fun wordleScrapedJSON(): String {
     val reader = BufferedReader(InputStreamReader(ANSWER_LIST_URL.openStream()))
 
     // Find the line where the answers JSON object exists
@@ -173,10 +170,24 @@ fun wordleAnswer(index: Int): String {
     }?.value ?: throw IllegalArgumentException("Could not find line with answers")
     // Pull the raw JSON out of the call to `JSON.parse`
     return matchLine.substring(0..matchLine.indexOf("}\");")).trimStart('"').replace("\\", "")
-        // Find where the desired index is declared
-        .substringAfter("\"index\":$index")
+}
+
+/**
+ * Get the Wordle answer from any given date
+ */
+fun wordleAnswer(index: Int): String {
+    // Find where the desired index is declared
+    return wordleScrapedJSON().substringAfter("\"index\":$index")
         // Find where the answer is declared after the index
         .substringAfter("\"answer\":\"")
         // Cut off everything after the answer
         .substringBefore('"')
+}
+
+/**
+ * Find out the number of wordle puzzles that have been posted
+ */
+fun wordleCount(): Int {
+    // Subtract 2 to remove the splits before the first occurrence of "index" and after the last
+    return wordleScrapedJSON().splitToSequence(Regex(""""index":""")).count() - 2
 }

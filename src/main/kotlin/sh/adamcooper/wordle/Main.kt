@@ -4,7 +4,7 @@ import java.io.File
 import kotlin.system.exitProcess
 
 private fun errorExit() {
-    println("Valid commands: \ntop\nplay <answer>\nlist\nanswer [n]")
+    println("Valid commands: \ntop\nplay <answer>\nlist\nanswer [n]\ncount")
     exitProcess(1)
 }
 
@@ -54,6 +54,13 @@ fun main(args: Array<String>) {
                 errorExit()
             }
             println(wordleAnswer(args[1].toInt()))
+        }
+
+        "count" -> {
+            if (args.size != 1) {
+                errorExit()
+            }
+            println(wordleCount())
         }
     }
 }
