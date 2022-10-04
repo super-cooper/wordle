@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
         errorExit()
     }
 
-    val words = File("words.txt").readText().split(",").map { it.trim() }
+    val words = File("words.txt").readText().split(",").map(String::trim).map(String::uppercase)
 
     when (args[0]) {
         "top" -> {
@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
             if (args.size != 2) {
                 errorExit()
             }
-            val answer = args[1]
+            val answer = args[1].uppercase()
             val board = playWordle(
                 words,
                 findBestWords(words, n = 1, uniqueOnly = true).asSequence().first().key,

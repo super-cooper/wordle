@@ -19,7 +19,7 @@ fun findBestWords(words: List<String>, n: Int = 5, uniqueOnly: Boolean = false):
         return mapOf(words.first() to 0)
     }
     // Initialize counter of lowercase alphabet mapped to 0
-    val counter = ('a'..'z').associateWith { 0 }.toMutableMap()
+    val counter = ('A'..'Z').associateWith { 0 }.toMutableMap()
 
     for (word in words) {
         // Create groupings of all the characters in the word
@@ -153,7 +153,12 @@ fun downloadWordList(): List<String> {
     return buildList {
         for (line in reader.lineSequence()) {
             if (line.matches(WORD_LIST_SCRAPING_REGEX)) {
-                this.addAll(line.replace("</p>", "").splitToSequence(',').map(String::trim))
+                this.addAll(
+                    line.replace("</p>", "")
+                        .splitToSequence(',')
+                        .map(String::trim)
+                        .map(String::uppercase)
+                )
             }
         }
     }.also {
