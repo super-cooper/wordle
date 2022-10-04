@@ -41,5 +41,12 @@ fun main(args: Array<String>) {
             )
             println(board.joinToString(separator = "\n"))
         }
+
+        "list" -> {
+            if (args.size != 1) {
+                errorExit()
+            }
+            println(downloadWordList().joinToString(separator = "\n"))
+        }
     }
 }

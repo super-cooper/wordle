@@ -1,5 +1,12 @@
 package sh.adamcooper.wordle
 
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URL
+
+private val WORD_LIST_URL = URL("https://wordletoday.org/wordle-words.php")
+private val WORD_LIST_SCRAPING_REGEX = Regex("""^\s*([a-z]+(,\s|</p>))+\s*$""")
+
 /**
  * Finds the best word in the word list by counting the most common characters and then
  * scoring all the words with unique characters based on those counts.
@@ -133,4 +140,20 @@ fun playWordle(wordList: List<String>, startingGuess: String, answer: String): L
     } while (guess != answer)
 
     return guesses + guess
+}
+
+/**
+ * Downloads the list of all possible answers for Wordle.
+ */
+fun downloadWordList(): List<String> {
+    val reader = BufferedReader(InputStreamReader(WORD_LIST_URL.openStream()))
+    return buildList {
+        for (line in reader.lineSequence()) {
+            if (line.matches(WORD_LIST_SCRAPING_REGEX)) {
+                this.addAll(line.replace("</p>", "").splitToSequence(',').map(String::trim))
+            }
+        }
+    }.also {
+        reader.close()
+    }
 }
