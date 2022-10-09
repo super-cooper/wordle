@@ -35,7 +35,7 @@ fun findBestWords(words: List<String>, n: Int = 5, uniqueOnly: Boolean = false):
         .filter { !uniqueOnly || it.toSet().size == it.length }
         // Get the score by summing the overall counter values of all the chars in the word
         .associateWith { word ->
-            word.sumOf(counter::getValue)
+            word.sumOf(counter::getValue) + if (word.toSet().size == word.length) 1000 else 0
         }
 
     val sortedWords = scores.asSequence()
