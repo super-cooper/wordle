@@ -103,7 +103,11 @@ fun playWordle(wordList: List<String>, startingGuess: String, answer: String): L
     // The current guess
     var guess = startingGuess
     // The remaining pool of words to guess from
-    var words = wordList.toList()
+    var words = wordList.toMutableList()
+    // Handle old puzzles which might have different word lists
+    if (!words.contains(answer)) {
+        words += answer
+    }
 
     do {
         val results = getResultOfGuess(guess, answer)
@@ -136,7 +140,7 @@ fun playWordle(wordList: List<String>, startingGuess: String, answer: String): L
                 green.asSequence().all { (c, indices) ->
                     indices.all { word[it] == c }
                 }
-        }
+        }.toMutableList()
 
         guesses.add(guess)
         guess = findBestWords(words, n = 1).asSequence().first().key
