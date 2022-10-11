@@ -29,10 +29,10 @@ fun main(args: Array<String>) {
         }
 
         "play" -> {
-            if (args.size != 2) {
+            if (args.size > 2) {
                 errorExit()
             }
-            val answer = args[1].uppercase()
+            val answer = (args.getOrNull(1) ?: wordleAnswer(wordleCount())).uppercase()
             val board = playWordle(
                 words,
                 findBestWords(words, n = 1, uniqueOnly = true).asSequence().first().key,
