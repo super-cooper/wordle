@@ -12,14 +12,14 @@ fun main(args: Array<String>) {
         errorExit()
     }
 
-    val words = downloadWordList()
+    val wordle = Wordle()
 
     when (args[0]) {
         "top" -> {
             if (args.size != 1) {
                 errorExit()
             }
-            val top5Words = findBestWords(words, uniqueOnly = true)
+            val top5Words = wordle.findBestWords(uniqueOnly = true)
             println(
                 "Top 5 words:\n${
                 top5Words.asSequence()
@@ -32,12 +32,8 @@ fun main(args: Array<String>) {
             if (args.size > 2) {
                 errorExit()
             }
-            val answer = (args.getOrNull(1) ?: wordleAnswer(wordleCount())).uppercase()
-            val board = playWordle(
-                words,
-                findBestWords(words, n = 1, uniqueOnly = true).asSequence().first().key,
-                answer
-            )
+            val answer = args.getOrNull(1) ?: wordle.answer(wordle.count)
+            val board = wordle.play(wordle.bestWord, answer)
             println(board.joinToString(separator = "\n"))
         }
 
@@ -45,21 +41,21 @@ fun main(args: Array<String>) {
             if (args.size != 1) {
                 errorExit()
             }
-            println(words.joinToString(separator = "\n"))
+            println(wordle.wordList.joinToString(separator = "\n"))
         }
 
         "answer" -> {
             if (args.size > 2) {
                 errorExit()
             }
-            println(wordleAnswer(args.getOrNull(1)?.toInt() ?: wordleCount()))
+            println(wordle.answer(args.getOrNull(1)?.toInt() ?: wordle.count))
         }
 
         "count" -> {
             if (args.size != 1) {
                 errorExit()
             }
-            println(wordleCount())
+            println(wordle.count)
         }
     }
 }
