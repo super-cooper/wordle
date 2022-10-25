@@ -3,12 +3,14 @@ package sh.adamcooper.wordle
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
+import java.util.logging.Logger
 
 /**
  * Groups together Wordle library functions along with cached state of online resources
  */
 class Wordle {
     val wordList: List<String> by lazy {
+        Wordle.log.info("Fetching Wordle word list")
         val reader = BufferedReader(InputStreamReader(WORD_LIST_URL.openStream()))
         return@lazy buildList {
             for (line in reader.lineSequence()) {
@@ -43,17 +45,21 @@ class Wordle {
         return@lazy this.scrapedJSON.splitToSequence(Regex(""""index":""")).count() - 2
     }
     val bestWord: String by lazy {
+        Wordle.log.info("Calculating best word")
         return@lazy this.findBestWords(
             this.wordList,
             n = 1,
             uniqueOnly = true
-        ).asSequence().first().key
+        ).asSequence().first().key.also {
+            Wordle.log.info("Found best word $it")
+        }
     }
 
     /**
      * Finds the best word in the word list by counting the most common characters and then
      * scoring all the words with unique characters based on those counts.
      */
+    @Suppress("MagicNumber")
     fun findBestWords(
         words: List<String> = this.wordList,
         n: Int = 5,
@@ -211,5 +217,7 @@ class Wordle {
 
         private val WORD_LIST_URL = URL("https://wordletoday.org/wordle-words.php")
         private val WORD_LIST_SCRAPING_REGEX = Regex("""^\s*([a-z]+(,\s|</p>))+\s*$""")
+
+        private val log = Logger.getLogger("Wordle")
     }
 }
