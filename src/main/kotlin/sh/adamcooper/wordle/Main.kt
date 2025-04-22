@@ -1,5 +1,6 @@
 package sh.adamcooper.wordle
 
+import java.time.LocalDate
 import kotlin.system.exitProcess
 
 private fun errorExit() {
@@ -32,7 +33,7 @@ fun main(args: Array<String>) {
             if (args.size > 2) {
                 errorExit()
             }
-            val answer = args.getOrNull(1) ?: wordle.answer(wordle.count)
+            val answer = args.getOrNull(1) ?: wordle.answer(LocalDate.now())
             val board = wordle.play(wordle.bestWord, answer)
             println(board.joinToString(separator = "\n"))
         }
@@ -48,14 +49,8 @@ fun main(args: Array<String>) {
             if (args.size > 2) {
                 errorExit()
             }
-            println(wordle.answer(args.getOrNull(1)?.toInt() ?: wordle.count))
-        }
-
-        "count" -> {
-            if (args.size != 1) {
-                errorExit()
-            }
-            println(wordle.count)
+            val date = args.getOrNull(1)?.let { LocalDate.parse(it) } ?: LocalDate.now()
+            println(wordle.answer(date))
         }
     }
 }

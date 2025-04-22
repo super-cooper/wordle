@@ -1,8 +1,10 @@
 package sh.adamcooper.wordle
 
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.time.LocalDate
 import java.util.logging.Logger
 
 /**
@@ -11,42 +13,14 @@ import java.util.logging.Logger
 class Wordle {
     val wordList: List<String> by lazy {
         Wordle.log.info("Fetching Wordle word list")
-        val reader = BufferedReader(InputStreamReader(WORD_LIST_URL.openStream()))
-        return@lazy buildList {
-            for (line in reader.lineSequence()) {
-                if (line.matches(WORD_LIST_SCRAPING_REGEX)) {
-                    this.addAll(
-                        line.replace("</p>", "")
-                            .splitToSequence(',')
-                            .map(String::trim)
-                            .map(String::uppercase)
-                            .filter(String::isNotEmpty)
-                    )
-                }
-            }
-        }.also {
-            reader.close()
-        }
-    }
-    private val scrapedJSON: String by lazy {
-        val reader = BufferedReader(InputStreamReader(ANSWER_LIST_URL.openStream()))
-        // Find the line where the answers JSON object exists
-        val matchLine = JSON_PAIR_REGEX.find(reader.readText())?.groups?.find {
-            it?.value?.startsWith('"') ?: false
-        }?.value ?: throw IllegalArgumentException("Could not find line with answers")
-        // Pull the raw JSON out of the call to `JSON.parse`
-        return@lazy matchLine
-            .substring(0..matchLine.indexOf("}\");"))
-            .trimStart('"')
-            .replace("\\", "")
-    }
-    val count: Int by lazy {
-        // Subtract 2 to remove the splits before the first occurrence of "index" and after the last
-        return@lazy this.scrapedJSON.splitToSequence(Regex(""""index":""")).count() - 2
+        val httpClient = HttpClient.newHttpClient()
+        val request = HttpRequest.newBuilder(URI.create(WORD_LIST_URL)).build()
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        response.body().splitToSequence("\n").map(String::trim).map(String::uppercase).filter(String::isNotEmpty).toList()
     }
     val bestWord: String by lazy {
         Wordle.log.info("Calculating best word")
-        return@lazy this.findBestWords(
+        this.findBestWords(
             this.wordList,
             n = 1,
             uniqueOnly = true
@@ -68,10 +42,13 @@ class Wordle {
         if (words.size == 1) {
             return mapOf(words.first() to 0)
         }
-        // Initialize counter of lowercase alphabet mapped to 0
+        // Initialize counter of uppercase alphabet mapped to 0
         val counter = ('A'..'Z').associateWith { 0 }.toMutableMap()
 
         for (word in words) {
+            if (word != word.uppercase()) {
+                println("$word!!!!!!!!!!!!!!!!!!!")
+            }
             // Create groupings of all the characters in the word
             word.groupingBy { it }
                 // Get counts of all the characters in the word
@@ -202,21 +179,21 @@ class Wordle {
     /**
      * Get the Wordle answer from any given date
      */
-    fun answer(index: Int): String {
+    fun answer(date: LocalDate): String {
+        val httpClient = HttpClient.newHttpClient()
+        val request = HttpRequest.newBuilder(URI.create("$WORDLE_API_URL/$date.json")).build()
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        val json = response.body().trim()
         // Find where the desired index is declared
-        return this.scrapedJSON.substringAfter("\"index\":$index,")
-            // Find where the answer is declared after the index
-            .substringAfter("\"answer\":\"")
+        return json.substringAfter("\"solution\":\"")
             // Cut off everything after the answer
-            .substringBefore('"')
+            .substringBefore('"').uppercase()
     }
 
     companion object {
-        private val ANSWER_LIST_URL = URL("https://wordfinder.yourdictionary.com/wordle/answers/")
-        private val JSON_PAIR_REGEX = Regex(""".*JSON\.parse\((.+)""")
+        private const val WORDLE_API_URL = "https://www.nytimes.com/svc/wordle/v2/"
 
-        private val WORD_LIST_URL = URL("https://wordletoday.org/wordle-words.php")
-        private val WORD_LIST_SCRAPING_REGEX = Regex("""^\s*([a-z]+(,\s|</p>))+\s*$""")
+        private const val WORD_LIST_URL = "https://gist.githubusercontent.com/dracos/dd0668f281e685bad51479e5acaadb93/raw/6bfa15d263d6d5b63840a8e5b64e04b382fdb079/valid-wordle-words.txt"
 
         private val log = Logger.getLogger("Wordle")
     }
