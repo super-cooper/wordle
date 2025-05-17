@@ -37,7 +37,7 @@ jobs:
       - name: "detekt"
         uses: natiginfo/action-detekt-all@1.23.8
         with:
-          args: --config detekt.yml --report sarif:${{ github.workspace }}/detekt.sarif.json
+          args: --config detekt.yml --report sarif:detekt.sarif.json
 
       # Uploads results to GitHub repository using the upload-sarif action
       - uses: github/codeql-action/upload-sarif@v3
