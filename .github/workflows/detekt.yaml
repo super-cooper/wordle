@@ -4,13 +4,13 @@ name: Scan with Detekt
 on:
   # Triggers the workflow on push or pull request events but only for default and protected branches
   push:
-    branches: ["main"]
+    branches: ["master"]
     paths:
       - "src/**"
       - ".github/workflows/detekt.yaml"
       - "detekt.yml"
   pull_request:
-    branches: ["main"]
+    branches: ["master"]
     paths:
       - "src/**"
       - ".github/workflows/detekt.yaml"

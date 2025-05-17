@@ -2,12 +2,12 @@
 name: 'yamllint'
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
     paths:
       - "**.yaml"
       - "**.yml"
   pull_request:
-    branches: ["main"]
+    branches: ["master"]
     paths:
       - "**.yaml"
       - "**.yml"
