@@ -10,7 +10,7 @@ name: Build with Gradle
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - "src/**"
       - ".github/workflows/build.yaml"
@@ -19,7 +19,7 @@ on:
       - "gradle.properties"
       - "settings.gradle.kts"
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - "src/**"
       - ".github/workflows/build.yaml"
