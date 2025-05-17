@@ -1,6 +1,7 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    kotlin("multiplatform") version "1.7.20"
-    application
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
 group = "sh.adamcooper"
@@ -12,10 +13,9 @@ repositories {
 
 kotlin {
     jvm("java") {
-        compilations.all {
-            kotlinOptions.jvmTarget = "16"
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_23
         }
-        withJava()
     }
     sourceSets {
         val javaMain by getting {
@@ -23,8 +23,4 @@ kotlin {
             resources.srcDir("src/main/resources")
         }
     }
-}
-
-application {
-    mainClass.set("sh.adamcooper.wordle.MainKt")
 }
