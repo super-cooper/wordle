@@ -14,7 +14,7 @@ repositories {
 kotlin {
     jvm("java") {
         compilerOptions {
-            jvmTarget = JvmTarget.JVM_23
+            jvmTarget = JvmTarget.JVM_21
         }
     }
     sourceSets {
