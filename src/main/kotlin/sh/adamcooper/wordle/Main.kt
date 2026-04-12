@@ -17,14 +17,15 @@ fun main(args: Array<String>) {
 
     when (args[0]) {
         "top" -> {
-            if (args.size != 1) {
+            if (args.size > 2) {
                 errorExit()
             }
-            val top5Words = wordle.findBestWords(uniqueOnly = true)
+            val n = args.getOrNull(1)?.toInt() ?: 5
+            val top5Words = wordle.findBestWords(n = n, uniqueOnly = true)
             println(
                 "Top 5 words:\n${
-                top5Words.asSequence()
-                    .joinToString(separator = "\n") { "${it.key} ${it.value}" }
+                    top5Words.asSequence()
+                        .joinToString(separator = "\n") { "${it.key} ${it.value}" }
                 }"
             )
         }
