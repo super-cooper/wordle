@@ -24,3 +24,14 @@ kotlin {
         }
     }
 }
+
+tasks.register<JavaExec>("run") {
+    val javaTarget = kotlin.targets.getByName("java")
+    val mainCompilation = javaTarget.compilations.getByName("main")
+
+    classpath = mainCompilation.output.allOutputs + configurations.getByName("javaRuntimeClasspath")
+    mainClass.set("sh.adamcooper.wordle.MainKt")
+
+    // Ensure the code is compiled before running
+    dependsOn(mainCompilation.compileTaskProvider)
+}
