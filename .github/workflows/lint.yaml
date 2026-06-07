@@ -7,7 +7,7 @@ on:
     paths:
       - "src/**"
       - ".cargo/**"
-      - ".github/workflows/build.yaml"
+      - ".github/workflows/lint.yaml"
       - "Cargo.toml"
       - "Cargo.lock"
       - "clippy.toml"
@@ -16,7 +16,7 @@ on:
     paths:
       - "src/**"
       - ".cargo/**"
-      - ".github/workflows/build.yaml"
+      - ".github/workflows/lint.yaml"
       - "Cargo.toml"
       - "Cargo.lock"
       - "clippy.toml"

@@ -7,7 +7,7 @@ on:
     paths:
       - "src/**"
       - ".cargo/**"
-      - ".github/workflows/build.yaml"
+      - ".github/workflows/test.yaml"
       - "Cargo.toml"
       - "Cargo.lock"
   pull_request:
@@ -15,7 +15,7 @@ on:
     paths:
       - "src/**"
       - ".cargo/**"
-      - ".github/workflows/build.yaml"
+      - ".github/workflows/test.yaml"
       - "Cargo.toml"
       - "Cargo.lock"
 

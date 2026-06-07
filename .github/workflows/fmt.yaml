@@ -7,7 +7,7 @@ on:
     paths:
       - "src/**"
       - ".cargo/**"
-      - ".github/workflows/build.yaml"
+      - ".github/workflows/fmt.yaml"
       - "Cargo.toml"
       - "Cargo.lock"
       - "rustfmt.toml"
