@@ -1,0 +1,33 @@
+---
+name: Format
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - "src/**"
+      - ".cargo/**"
+      - ".github/workflows/build.yaml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rustfmt.toml"
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "src/**"
+      - ".cargo/**"
+      - ".github/workflows/build.yaml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rustfmt.toml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup update nightly && rustup default nightly
+      - run: cargo fmt

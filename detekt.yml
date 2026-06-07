@@ -1,5 +1,0 @@
----
-complexity:
-  LongMethod:
-    excludes:
-      - '**/static/**'
