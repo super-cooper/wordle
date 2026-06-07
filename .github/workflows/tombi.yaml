@@ -1,0 +1,31 @@
+---
+name: "tombi"
+
+on:
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "**.toml"
+  push:
+    branches: ["master"]
+    paths:
+      - "**.toml"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v6
+      - uses: tombi-toml/setup-tombi@v1
+      - name: Lint with tombi
+        run: tombi check
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v6
+      - uses: tombi-toml/setup-tombi@v1
+      - name: Format with tombi
+        run: tombi format --check --diff
