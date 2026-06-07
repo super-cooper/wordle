@@ -1,0 +1,3 @@
+max-fn-params-bools = 1
+allow-mixed-uninlined-format-args = false
+allowed-wildcard-imports = ["fixtures", "mocks"]
