@@ -14,17 +14,17 @@ name = "wordle"
 path = "src/lib.rs"
 
 [dev-dependencies]
-assertables = { version = "10.1.*" }
-chrono = { version = "0.4.*", features = ["serde"] }
-chrono-tz = { version = "0.10.*" }
-clap = { version = "4.6.*", features = ["derive"] }
-injectorpp = { version = "0.5.*" }
-log = { version = "0.4.*" }
-mockall = { version = "0.14.*" }
-proptest = { version = "1.11.*" }
-reqwest = { version = "0.13.*", features = ["blocking", "json", "native-tls"] }
-rstest = "0.26.*"
-serde = { version = "1.0.*", features = ["derive"] }
+assertables = { version = "10.1.0" }
+chrono = { version = "0.4.45", features = ["serde"] }
+chrono-tz = { version = "0.10.4" }
+clap = { version = "4.6.1", features = ["derive"] }
+injectorpp = { version = "0.5.1" }
+log = { version = "0.4.32" }
+mockall = { version = "0.14.0" }
+proptest = { version = "1.11.0" }
+reqwest = { version = "0.13.4", features = ["blocking", "json", "native-tls"] }
+rstest = "0.26.1"
+serde = { version = "1.0.228", features = ["derive"] }
 
 [lints.clippy]
 alloc_instead_of_core = "deny"
