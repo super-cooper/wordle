@@ -1,6 +1,8 @@
 //! Get the highest-value words from a word list.
 mod common;
 
+use std::fmt::Write;
+
 use clap::{
     Args,
     Parser,
@@ -32,17 +34,8 @@ struct Cli {
 }
 
 /// Get the top N words from a word list.
-///
-/// Usage: top [OPTIONS]
-///
-/// Options:
-/// --words <WORDS>                   Optional comma-separated list of words
-/// --wordle-api-url <WORDLE_API_URL> The API for checking the Wordle answer if one is not provided
-/// --word-list-url <WORD_LIST_URL>   The URL used to fetch the newline-separated list of words
-///                                   if a list is not provided via [WORDS]
-/// --answer <ANSWER>                 An optional custom answer
 fn main() -> Result<(), WordleExampleError> {
-    init_logging();
+    init_logging()?;
     let cli = Cli::parse();
     let list = cli.common.words();
 
@@ -51,15 +44,22 @@ fn main() -> Result<(), WordleExampleError> {
         None => Wordle::from_client(&cli.common.api()),
     }?;
 
-    let round = game.round(cli.common.answer().unwrap_or("ABCDE".to_string()))?;
+    let round = game.round(cli.common.answer().unwrap_or_else(|| "ABCDE".to_string()))?;
 
     let top_words = round
         .best(ScoreMode::UniqueOnly { n: cli.top.n })
         .into_iter()
-        .map(|score| format!("{score}\n"))
-        .collect::<String>();
+        .try_fold(
+            String::new(),
+            |mut s, score| -> Result<String, std::fmt::Error> {
+                writeln!(s, "{score}")?;
+                Ok(s)
+            },
+        )?;
 
     print!("{top_words}");
+
+    log::info!("Done");
 
     Ok(())
 }

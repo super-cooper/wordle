@@ -1,4 +1,8 @@
-//! Common types and values used across [`wordle`] examples
+//! Common types and values used across [`wordle`] examples.
+#![expect(
+    clippy::mod_module_files,
+    reason = "This is the only way to have common code for examples."
+)]
 use std::fmt::{
     Display,
     Formatter,
@@ -21,6 +25,7 @@ use log::{
     Log,
     Metadata,
     Record,
+    SetLoggerError,
 };
 use serde::Deserialize;
 
@@ -40,7 +45,7 @@ type WordleDate = DateTime<Tz>;
     reason = "Because of how examples work, the ones which don't use this function will produce a \
               dead code warning."
 )]
-pub fn today() -> WordleDate {
+pub fn now() -> WordleDate {
     // US/New_York is chosen because Wordle is hosted by the New York Times
     Local::now().with_timezone(&America::New_York)
 }
@@ -53,9 +58,10 @@ impl Log for Logger {
     }
 
     fn log(&self, record: &Record) {
+        let msg = format!("{} {}: {}", now(), record.level(), record.args());
         match record.level() {
-            Level::Error => eprintln!("{}: {}", record.level(), record.args()),
-            _ => println!("{}: {}", record.level(), record.args()),
+            Level::Error => eprintln!("{msg}"),
+            _ => println!("{msg}"),
         };
     }
 
@@ -64,9 +70,10 @@ impl Log for Logger {
 
 const LOGGER: Logger = Logger;
 
-pub fn init_logging() {
-    log::set_logger(&LOGGER).expect("Failed to initialize logger");
+pub fn init_logging() -> Result<(), WordleExampleError> {
+    log::set_logger(&LOGGER)?;
     log::set_max_level(LevelFilter::Info);
+    Ok(())
 }
 
 #[derive(Debug)]
@@ -74,6 +81,7 @@ pub enum WordleExampleError {
     Wordle { e: wordle::Error },
     Network { e: reqwest::Error },
     Format { msg: String },
+    Oof { msg: String },
 }
 
 impl Display for WordleExampleError {
@@ -82,6 +90,7 @@ impl Display for WordleExampleError {
             Self::Wordle { e } => write!(f, "wordle error: {e}"),
             Self::Network { e } => write!(f, "reqwest error: {e}"),
             Self::Format { msg } => write!(f, "formatting issue: {msg}"),
+            Self::Oof { msg } => write!(f, "oof: {msg}"),
         }
     }
 }
@@ -91,7 +100,7 @@ impl std::error::Error for WordleExampleError {
         match self {
             Self::Wordle { e } => Some(e),
             Self::Network { e } => Some(e),
-            Self::Format { .. } => None,
+            Self::Format { .. } | Self::Oof { .. } => None,
         }
     }
 }
@@ -111,6 +120,18 @@ impl From<io::Error> for WordleExampleError {
 impl From<reqwest::Error> for WordleExampleError {
     fn from(e: reqwest::Error) -> Self {
         Self::Network { e }
+    }
+}
+
+impl From<std::fmt::Error> for WordleExampleError {
+    fn from(e: std::fmt::Error) -> Self {
+        Self::Format { msg: e.to_string() }
+    }
+}
+
+impl From<SetLoggerError> for WordleExampleError {
+    fn from(e: SetLoggerError) -> Self {
+        Self::Oof { msg: e.to_string() }
     }
 }
 
@@ -137,28 +158,41 @@ impl WordleApi {
     fn fetch_answer_impl(&self, date: WordleDate) -> Result<String, WordleExampleError> {
         let date = date
             .to_rfc3339()
-            .split_once("T")
+            .split_once('T')
             .map(|(date, _time)| String::from(date))
             .ok_or_else(|| WordleExampleError::Format {
                 msg: format!("Could not convert date to RFC 3339 format {date}"),
             })?;
+
         log::info!("Fetching Wordle answer for {date}");
+
         let resp = self
             .http_client
-            .get(format!("{url}/{date}.json", url = &self.api_url))
+            .get(format!("{url}/{date}.json", url = self.api_url))
             .send()?;
-        Ok(resp.json::<WordleSolution>()?.solution)
+
+        let solution = resp.json::<WordleSolution>()?.solution;
+
+        log::info!("Fetched solution {solution}.");
+
+        Ok(solution)
     }
 
     fn fetch_word_list_impl(&self) -> Result<Vec<String>, WordleExampleError> {
         log::info!("Fetching Wordle word list");
+
         let resp = self.http_client.get(&self.list_url).send()?;
-        Ok(resp
+
+        let list = resp
             .text()?
             .trim()
-            .split_terminator("\n")
+            .split_terminator('\n')
             .map(String::from)
-            .collect())
+            .collect::<Vec<_>>();
+
+        log::info!("Fetched {} words", list.len());
+
+        Ok(list)
     }
 }
 

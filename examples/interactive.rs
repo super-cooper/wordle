@@ -18,29 +18,18 @@ use wordle::{
 };
 
 /// Play Wordle interactively in a REPL.
-/// Usage: interactive [OPTIONS]
-///
-/// Options:
-/// --words <WORDS>                   Optional comma-separated list of words
-/// --wordle-api-url <WORDLE_API_URL> The API for checking the Wordle answer if one is not provided
-/// --word-list-url <WORD_LIST_URL>   The URL used to fetch the newline-separated list of words
-///
-/// --answer <ANSWER>                 An optional custom answer
 fn main() -> Result<(), WordleExampleError> {
-    init_logging();
+    init_logging()?;
     let cli = CommonCli::parse();
     let list = cli.words();
     let answer = cli.answer();
 
-    let game = match list {
-        Some(list) => Wordle::from_list(list),
-        None => Wordle::from_client(&cli.api()),
-    }?;
+    let game = list.map_or_else(|| Wordle::from_client(&cli.api()), Wordle::from_list)?;
 
-    let mut round = match answer {
-        Some(answer) => game.round(answer),
-        None => game.round_date(&cli.api(), common::today()),
-    }?;
+    let mut round = answer.map_or_else(
+        || game.round_date(&cli.api(), common::now()),
+        |answer| game.round(answer),
+    )?;
 
     while !round.is_over() {
         print!("Guess: ");
@@ -60,7 +49,7 @@ fn main() -> Result<(), WordleExampleError> {
             let ansi_code = match color {
                 Color::Green => "32",
                 Color::Yellow => "33",
-                _ => "30",
+                Color::Gray => "30",
             };
             print!("\x1b[0;{ansi_code}m{letter}\x1b[0;0m ");
         }
