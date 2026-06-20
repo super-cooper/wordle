@@ -31,6 +31,7 @@ hooks = [
     name = "Update Rust toolchain",
     language = "system",
     entry = "rustup update",
+    files = "\\.rs$|^Cargo\\.(toml|lock)$|^rust-toolchain\\.toml$|^clippy\\.toml|^rustfmt\\.toml$|^\\.cargo/config\\.toml$",
     pass_filenames = false,
   },
   {
