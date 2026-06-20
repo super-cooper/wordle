@@ -27,6 +27,13 @@ hooks = [{ id = "yamllint", name = "Lint/Format YAML" }]
 repo = "local"
 hooks = [
   {
+    id = "update-toolchina",
+    name = "Update Rust toolchain",
+    language = "system",
+    entry = "rustup update",
+    pass_filenames = false,
+  },
+  {
     id = "clippy",
     name = "Lint Rust",
     language = "system",
