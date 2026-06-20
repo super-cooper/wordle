@@ -42,6 +42,19 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ matrix.toolchain }}
-      - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
-      - run: cargo +${{ matrix.toolchain }} update
-      - run: cargo +${{ matrix.toolchain }} test
+      - name: Install toolchain
+        run: |
+          rustup default ${{ matrix.toolchain }}
+          rustup update
+          cargo update
+          rustup component add llvm-tools-preview
+          cargo install cargo-llvm-cov
+      - name: Run tests
+        run: |
+          cargo llvm-cov --all-features --workspace --doctests --lcov --output-path lcov.info
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: lcov.info
+          fail_ci_if_error: true
