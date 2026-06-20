@@ -1,0 +1,53 @@
+#:schema https://www.schemastore.org/prek.json
+
+[[repos]]
+repo = "https://github.com/pre-commit/pre-commit-hooks"
+rev = "v2.3.0"
+hooks = [
+  { id = "check-toml" },
+  { id = "check-yaml" },
+  { id = "end-of-file-fixer" },
+  { id = "trailing-whitespace" },
+]
+
+[[repos]]
+repo = "https://github.com/tombi-toml/tombi-pre-commit"
+rev = "v1.1.2"
+hooks = [
+  { id = "tombi-lint", name = "Lint TOML" },
+  { id = "tombi-format", name = "Format TOML" },
+]
+
+[[repos]]
+repo = "https://github.com/adrienverge/yamllint.git"
+rev = "v1.38.0"
+hooks = [{ id = "yamllint", name = "Lint/Format YAML" }]
+
+[[repos]]
+repo = "local"
+hooks = [
+  {
+    id = "clippy",
+    name = "Lint Rust",
+    language = "system",
+    entry = "cargo clippy",
+    files = "\\.rs$|^Cargo\\.(toml|lock)$|^rust-toolchain\\.toml$|^clippy\\.toml$",
+    pass_filenames = false,
+  },
+  {
+    id = "rustfmt",
+    name = "Format Rust",
+    language = "system",
+    entry = "cargo fmt --",
+    files = "\\.rs$|^Cargo\\.(toml|lock)$|^rust-toolchain\\.toml$|^rustfmt\\.toml$",
+    pass_filenames = false,
+  },
+  {
+    id = "test",
+    name = "Test Rust",
+    language = "system",
+    entry = "cargo test",
+    files = "\\.rs$|^Cargo\\.(toml|lock)$|^rust-toolchain\\.toml$|^\\.cargo/config\\.toml$",
+    pass_filenames = false,
+  },
+]

@@ -20,4 +20,3 @@ top5_words = sorted(scores, reverse=True, key=lambda w: scores[w])[:5]
 
 result_string = "\n".join(f'{word} {scores[word]}' for word in top5_words)
 print(f"Top 5 words:\n{result_string}")
-

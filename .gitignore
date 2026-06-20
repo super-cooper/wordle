@@ -129,3 +129,5 @@ gradle-app.setting
 # Rust
 
 target/
+# Because this is a library
+Cargo.lock
