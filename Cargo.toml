@@ -19,7 +19,7 @@ chrono = { version = "0.4.45", features = ["serde"] }
 chrono-tz = { version = "0.10.4" }
 clap = { version = "4.6.1", features = ["derive"] }
 log = { version = "0.4.32" }
-mockall = { version = "0.14.0" }
+mockall = { version = "0.15.0" }
 proptest = { version = "1.11.0" }
 reqwest = { version = "0.13.4", features = ["blocking", "json", "native-tls"] }
 rstest = "0.26.1"
