@@ -222,7 +222,7 @@ impl Round {
     /// performed when when any two words have the same initial score. The tiebreaker will also only
     /// be performed one time for each combination of words with the same score.
     ///
-    /// Because the number of returned scores is dynamic and must be sorted, there is a single
+    /// Because the number of returned scores is dynamic, there is a single
     /// allocation to store any computed [`Score`s]. That buffer is returned directly to the caller.
     /// If the configured amount of scores is low and the space of possible answers to this
     /// [`Round`] is large, the returned [`IntoIterator`] will contain significant excess memory, as
@@ -299,7 +299,9 @@ impl Round {
     /// [`Yellow`]: crate::Color::Yellow
     /// [`Green`]: crate::Color::Green
     pub fn best(&self, score_mode: ScoreMode) -> impl IntoIterator<Item = Score> {
-        if self.words.is_empty() || score_mode.n() == 0 {
+        let n = std::cmp::min(score_mode.n(), self.words.len());
+
+        if n == 0 {
             return Vec::new();
         };
 
@@ -315,20 +317,28 @@ impl Round {
             .map(|word| score::compute(&self.words, word, score_mode))
             .collect::<Vec<_>>();
 
-        scores.sort_by(|s1, s2| {
-            // Sort in reverse, so the highest scores are first.
-            s1.score()
-                .cmp(&s2.score())
-                .then_with(|| {
-                    // Handle tiebreakers when both words have the same score
-                    score::break_tie(&self.words, s1.word_data(), s2.word_data())
-                })
-                .reverse()
-        });
-
-        scores.truncate(score_mode.n());
+        // Narrow the list to just the n best scores in no particular order
+        let comparitor = rank_scores_with(&self.words);
+        scores.select_nth_unstable_by(n - 1, comparitor);
+        scores.truncate(n);
+        // Then, sort only the top n scores
+        scores.sort_by(comparitor);
 
         scores
+    }
+}
+
+/// Returns a closure which implements a [`Score`] comparator.
+fn rank_scores_with(scorer: &impl Scorer) -> impl (FnMut(&Score, &Score) -> Ordering) + Copy {
+    |s1, s2| {
+        // Compare in reverse, so the highest scores are first.
+        s1.score()
+            .cmp(&s2.score())
+            .then_with(|| {
+                // Handle tiebreakers when both words have the same score
+                score::break_tie(scorer, s1.word_data(), s2.word_data())
+            })
+            .reverse()
     }
 }
 

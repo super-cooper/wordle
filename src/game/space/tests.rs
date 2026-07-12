@@ -5,7 +5,6 @@ use assertables::{
     assert_iter_eq,
     assert_len_eq_x,
     assert_not_contains,
-    assert_not_empty,
 };
 use fixtures::*;
 use rstest::{
@@ -68,23 +67,9 @@ mod from_iter {
     }
 }
 
-mod is_empty {
-    use super::*;
-
-    #[rstest]
-    fn full(test_word_space: WordSpace) {
-        assert_not_empty!(test_word_space);
-    }
-
-    #[rstest]
-    fn empty(empty_word_space: WordSpace) {
-        assert_is_empty!(empty_word_space);
-    }
-}
-
 #[rstest]
 fn include_answer(mut empty_word_space: WordSpace, grunt: Word) {
-    empty_word_space.include_answer(grunt.clone());
+    empty_word_space.include_answer(grunt);
 
     assert_in!(&grunt, empty_word_space.words);
     assert_eq!(empty_word_space.letters.total_letters(), WORD_LENGTH as u32);

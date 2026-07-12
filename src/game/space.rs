@@ -32,11 +32,6 @@ pub(super) struct WordSpace {
 }
 
 impl WordSpace {
-    /// Tells if this [`WordSpace`] does not contain any [`Word`]s.
-    pub const fn is_empty(&self) -> bool {
-        self.words.is_empty()
-    }
-
     /// This is not expected to be used throughout the course of the game. It is only here in case
     /// an old game is being played, and the answer is not in the current published version of the
     /// word list. Including the answer into the space ensures that the puzzle will remain solvable.
