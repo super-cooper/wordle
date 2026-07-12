@@ -30,6 +30,7 @@ hooks = [
     id = "update-toolchain",
     name = "Update Rust toolchain",
     language = "system",
+    shell = "bash",
     entry = "rustup update && cargo update",
     files = "\\.rs$|^Cargo\\.(toml|lock)$|^rust-toolchain\\.toml$|^clippy\\.toml|^rustfmt\\.toml$|^\\.cargo/config\\.toml$",
     pass_filenames = false,
