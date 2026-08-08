@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Check out source repository
         uses: actions/checkout@v7
-      - uses: tombi-toml/setup-tombi@v1.2.4
+      - uses: tombi-toml/setup-tombi@v1.2.6
       - name: Lint with tombi
         run: tombi check
 
@@ -28,6 +28,6 @@ jobs:
     steps:
       - name: Check out source repository
         uses: actions/checkout@v7
-      - uses: tombi-toml/setup-tombi@v1.2.4
+      - uses: tombi-toml/setup-tombi@v1.2.6
       - name: Format with tombi
         run: tombi format --check --diff
