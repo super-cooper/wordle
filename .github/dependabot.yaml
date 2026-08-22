@@ -13,6 +13,8 @@ updates:
       semver-major-days: 30
       semver-minor-days: 30
       semver-patch-days: 14
+    commit-message:
+      prefix: build(cargo)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -22,3 +24,5 @@ updates:
       timezone: "America/New_York"
     cooldown:
       default-days: 30
+    commit-message:
+      prefix: build(actions)
