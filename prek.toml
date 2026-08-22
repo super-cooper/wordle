@@ -60,3 +60,14 @@ hooks = [
     pass_filenames = false,
   },
 ]
+
+[[repos]]
+repo = "https://github.com/alessandrojcm/commitlint-pre-commit-hook"
+rev = "v9.26.0"
+hooks = [
+  {
+    id = "commitlint",
+    name = "Lint commit message",
+    stages = ["commit-msg"]
+  }
+]
