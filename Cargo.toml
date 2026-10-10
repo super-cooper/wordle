@@ -22,7 +22,7 @@ log = { version = "0.4.32" }
 mockall = { version = "0.15.0" }
 proptest = { version = "1.11.0" }
 reqwest = { version = "0.13.4", features = ["blocking", "json", "native-tls"] }
-rstest = "0.26.1"
+rstest = "0.27.0"
 serde = { version = "1.0.228", features = ["derive"] }
 
 [lints.clippy]
