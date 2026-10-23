@@ -25,4 +25,4 @@ updates:
     cooldown:
       default-days: 30
     commit-message:
-      prefix: build(actions)
+      prefix: ci(actions)
