@@ -10,7 +10,7 @@ use std::fmt::{
 use crate::game::word::Word;
 
 /// The standard numeric type used to represent a word score.
-#[allow(
+#[expect(
     clippy::module_name_repetitions,
     reason = "Publicly exported via wordle namespace"
 )]
@@ -27,7 +27,7 @@ pub(super) trait Scorer {
 
 /// The desired approach for computation of word scores.
 #[derive(Clone, Copy, Debug)]
-#[allow(
+#[expect(
     clippy::module_name_repetitions,
     reason = "Publicly exported via wordle namespace"
 )]
@@ -113,7 +113,7 @@ impl Display for Score {
 pub(super) fn compute(scorer: &impl Scorer, word: Word, mode: ScoreMode) -> Score {
     if matches!(mode, ScoreMode::UniqueOnly { .. }) && !word.is_unique() {
         return Score::new(word, 0);
-    };
+    }
 
     Score::new(word, scorer.score(word))
 }

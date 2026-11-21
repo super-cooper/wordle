@@ -1,3 +1,5 @@
+#![expect(clippy::indexing_slicing, reason = "Known static sizes")]
+
 #[cfg(test)]
 mod tests;
 
@@ -86,7 +88,7 @@ impl LetterSpace {
             let position_mask = (PositionMask::default() + 1) << position;
             if forbidden_bitmap & position_mask != PositionMask::default() {
                 return false;
-            };
+            }
 
             counter[ordinal] += 1;
         }
@@ -146,7 +148,7 @@ impl LetterSpace {
                     gray[ordinal] = true;
                     self.forbidden_positions[ordinal] |= forbidden_mask;
                 },
-            };
+            }
         }
 
         // Re-calculate global limits for each letter
@@ -156,13 +158,13 @@ impl LetterSpace {
 
             if count > *min_required {
                 *min_required = count;
-            };
+            }
 
             // We found a gray letter, which means we can clamp it to the number of times
             // it appeared in the current guess, as it's not going to be anywhere else.
             if gray[ordinal] && count < *max_allowed {
                 *max_allowed = count;
-            };
+            }
         }
     }
 
@@ -207,6 +209,10 @@ impl Default for LetterSpace {
             shared_counter:      SharedCounter::default(),
             exact_counter:       ExactCounter::default(),
             min_required:        LimitTracker::default(),
+            #[expect(
+                clippy::cast_possible_truncation,
+                reason = "Constant within bounds of u8"
+            )]
             max_allowed:         [WORD_LENGTH as u8; ALPHABET_LENGTH],
             forbidden_positions: ForbiddenBitmap::default(),
         }
@@ -214,7 +220,9 @@ impl Default for LetterSpace {
 }
 
 impl FromIterator<Letter> for LetterSpace {
-    fn from_iter<T: IntoIterator<Item = Letter>>(iter: T) -> Self {
+    fn from_iter<T>(iter: T) -> Self
+    where
+        T: IntoIterator<Item = Letter>, {
         let mut space = Self::default();
         for letter in iter {
             space.add(letter);

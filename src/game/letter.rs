@@ -27,6 +27,10 @@ use crate::WORD_LENGTH;
 /// The ordinal is the rightmost 5 bits, and the position is the leftmost 3.
 const MASK: u8 = 0b00011111;
 /// The number of bits to shift the position for encode and decode.
+#[expect(
+    clippy::cast_possible_truncation,
+    reason = "Known number of trailing ones"
+)]
 const SHIFT: u8 = MASK.trailing_ones() as u8;
 
 /// Represents a letter in a word in terms of an ordinal, i.e. the index 0 through 25
@@ -49,6 +53,7 @@ impl Letter {
 
     /// Creates a [`char`] representation of the letter.
     pub fn to_char(self) -> char {
+        #[expect(clippy::cast_possible_truncation, reason = "Max 25")]
         char::from(b'A' + (self.ordinal() as u8))
     }
 }
@@ -59,12 +64,13 @@ impl TryFrom<(usize, char)> for Letter {
     fn try_from((i, c): (usize, char)) -> Result<Self> {
         if !c.is_ascii_alphabetic() {
             return Err(Self::Error::NotAsciiAlphabetic { c });
-        };
+        }
 
         if i >= WORD_LENGTH {
             return Err(Self::Error::InvalidPosition { i });
-        };
+        }
 
+        #[expect(clippy::cast_possible_truncation, reason = "Bounds checked above")]
         let position = i as u8;
         let ordinal = (c.to_ascii_uppercase() as u8) - b'A';
 

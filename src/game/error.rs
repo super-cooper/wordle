@@ -124,10 +124,10 @@ pub(super) trait WordExt: Sized {
 
 impl WordExt for Word {
     fn from_guess(guess: &str) -> Result<Self> {
-        Self::from_str(guess).map_err(|e| Error::invalid_guess(guess.to_string(), e))
+        Self::from_str(guess).map_err(|e| Error::invalid_guess(guess.to_owned(), e))
     }
 
     fn from_internal(word: &str) -> Result<Self> {
-        Self::from_str(word).map_err(|e| Error::invalid_word(word.to_string(), e))
+        Self::from_str(word).map_err(|e| Error::invalid_word(word.to_owned(), e))
     }
 }

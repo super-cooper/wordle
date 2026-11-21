@@ -17,6 +17,10 @@ pub enum Color {
 }
 
 impl Display for Color {
+    #[expect(
+        clippy::use_debug,
+        reason = "Quickest way to get the name of an enum value"
+    )]
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         write!(f, "{self:?}")
     }

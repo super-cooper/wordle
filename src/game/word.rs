@@ -62,6 +62,10 @@ impl Word {
     /// Wordle.
     ///
     /// In the context of this method, [`self`] is the answer to the puzzle.
+    #[expect(
+        clippy::indexing_slicing,
+        reason = "Known static sizes bound by constants"
+    )]
     pub fn colors(self, guess: Self) -> Colors {
         // Track final color results to return
         let mut colors = [Color::Gray; WORD_LENGTH];
@@ -80,7 +84,7 @@ impl Word {
             if self.letters[position] == letter {
                 colors[position] = Color::Green;
                 available_yellows[ordinal] = available_yellows[ordinal].saturating_sub(1);
-            };
+            }
         }
 
         // Third pass: now that all greens are known,
@@ -93,7 +97,7 @@ impl Word {
             if !matches!(colors[position], Color::Green) && available_yellows[ordinal] > 0 {
                 colors[position] = Color::Yellow;
                 available_yellows[ordinal] = available_yellows[ordinal].saturating_sub(1);
-            };
+            }
         }
 
         // All remaining letters are invalid, and left gray

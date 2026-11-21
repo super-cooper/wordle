@@ -64,7 +64,7 @@ impl WordSpace {
                 for letter in word.letters().iter().copied() {
                     self.letters.remove(letter);
                 }
-            };
+            }
             is_valid
         });
     }
@@ -87,7 +87,7 @@ impl WordSpace {
             for (ord_i, count) in &mut counts {
                 if *ord_i != ordinal && *ord_i != SENTINEL {
                     continue;
-                };
+                }
 
                 *ord_i = ordinal;
                 *count = self.letters.shared_count(letter);
@@ -118,7 +118,9 @@ impl WordSpace {
 }
 
 impl FromIterator<Word> for WordSpace {
-    fn from_iter<T: IntoIterator<Item = Word>>(iter: T) -> Self {
+    fn from_iter<T>(iter: T) -> Self
+    where
+        T: IntoIterator<Item = Word>, {
         let words = iter.into_iter().collect::<Vec<_>>();
         let letters = words
             .iter()
@@ -133,6 +135,7 @@ impl FromIterator<Word> for WordSpace {
 impl Index<usize> for WordSpace {
     type Output = Word;
 
+    #[expect(clippy::indexing_slicing, reason = "Implementation of Index operator")]
     fn index(&self, index: usize) -> &Self::Output {
         &self.words[index]
     }

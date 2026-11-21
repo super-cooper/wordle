@@ -108,7 +108,7 @@ impl Round {
         // Handle old puzzles which might have had different word lists
         if !words.contains(answer) {
             words.include_answer(answer);
-        };
+        }
 
         Self {
             guesses: ArrayView::default(),
@@ -162,7 +162,7 @@ impl Round {
     pub fn guess(&mut self, guess: impl AsRef<str>) -> crate::Result<Colors> {
         if self.is_over() {
             return Err(Error::TooManyGuesses.into());
-        };
+        }
 
         let guess = Word::from_guess(guess.as_ref())?;
         let colors = self.evaluate(guess);
@@ -303,13 +303,13 @@ impl Round {
 
         if n == 0 {
             return Vec::new();
-        };
+        }
 
         // We don't check `score_mode.n()` here because, in that case, the caller wants us
         // to compute the actual best word.
         if self.words.len() == 1 {
             return vec![Score::new(self.words[0], 0)];
-        };
+        }
 
         let mut scores = self
             .words

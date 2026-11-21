@@ -21,15 +21,15 @@ impl<T, const N: usize> ArrayView<T, N> {
     pub fn peek(&self) -> Option<&T> {
         if self.count == 0 {
             return None;
-        };
+        }
         self.data.get(self.count - 1)?.as_ref()
     }
 
     /// Pushes an item into view of the array.
+    #[expect(clippy::indexing_slicing, reason = "Known static size bounds")]
     pub fn push(&mut self, item: T) {
-        if self.count >= N {
-            panic!("Pushed past end of ArrayView");
-        };
+        debug_assert!(self.count < N, "Pushed past end of ArrayView");
+
         self.data[self.count].replace(item);
         self.count += 1;
     }
@@ -59,7 +59,9 @@ impl<T, const N: usize> FromIterator<T> for ArrayView<T, N> {
     /// If the iterator has more items than the [`ArrayView`]'s maximum size,
     /// this function panics. Always be sure that the configured size can
     /// always accommodate the passed [`IntoIterator`].
-    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = T>, {
         let mut new = Self::default();
         for x in iter {
             new.push(x);
@@ -77,10 +79,11 @@ pub(crate) struct ArrayViewIntoIterator<T, const N: usize> {
 impl<T, const N: usize> Iterator for ArrayViewIntoIterator<T, N> {
     type Item = T;
 
+    #[expect(clippy::indexing_slicing, reason = "Checked size bounds")]
     fn next(&mut self) -> Option<Self::Item> {
         if self.i >= self.view.count {
             return None;
-        };
+        }
 
         let value = self.view.data[self.i].take();
         self.i += 1;
