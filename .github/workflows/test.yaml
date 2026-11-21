@@ -47,8 +47,6 @@ jobs:
           rustup default ${{ matrix.toolchain }}
           rustup update
           cargo update
-          rustup component add llvm-tools-preview
-          cargo install cargo-llvm-cov
       - name: Run tests
         run: |
           cargo llvm-cov --all-features --workspace --doctests --lcov --output-path lcov.info
